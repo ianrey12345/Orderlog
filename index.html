@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Order Log — Sol y Mar Iloilo</title>
+<meta name="theme-color" content="#1A5C3A">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
+    <div>
+      <div class="topbar-title">🧾 Order Log</div>
+      <div class="topbar-sub" id="topbar-date"></div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="edit-pill" id="edit-pill" style="display:none">✏️ Edit mode</span>
+    <input type="text" id="staff-input" class="staff-input" placeholder="Your name">
+  </div>
+</div>
+
+<div class="view-tabs">
+  <button class="view-tab active" id="vt-new" data-view="new">📝 New Order</button>
+  <button class="view-tab" id="vt-summary" data-view="summary">📊 Summary</button>
+</div>
+
+<div class="main" id="main"></div>
+
+<!-- quantity picker -->
+<div class="modal" id="qty-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="qm-name"></div>
+    <div class="modal-sub" id="qm-sub">How many?</div>
+    <div class="qty-row">
+      <button id="qm-minus">−</button>
+      <div class="qty-big" id="qm-val">1</div>
+      <button id="qm-plus">+</button>
+    </div>
+    <div class="quick-qty" id="qm-quick"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="qm-cancel">Cancel</button>
+      <button class="btn btn-primary" id="qm-ok">Add to list</button>
+    </div>
+  </div>
+</div>
+
+<!-- void (admin password required) -->
+<div class="modal" id="void-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="vm-name"></div>
+    <div class="modal-sub" id="vm-sub"></div>
+    <div class="qty-row">
+      <button id="vm-minus">−</button>
+      <div class="qty-big" id="vm-val">1</div>
+      <button id="vm-plus">+</button>
+    </div>
+    <button class="btn btn-ghost btn-clear" id="vm-all" style="margin:0 0 12px">Void all</button>
+    <input type="password" class="void-pw" id="vm-pw" placeholder="Admin password" autocomplete="off">
+    <div class="login-err" id="vm-err"></div>
+    <div class="modal-actions" style="margin-top:6px">
+      <button class="btn btn-ghost" id="vm-cancel">Cancel</button>
+      <button class="btn btn-danger" id="vm-ok">Void</button>
+    </div>
+  </div>
+</div>
+
+<!-- burger menu -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-user" id="drawer-user"></div>
+    <div class="drawer-sub">Signed in</div>
+  </div>
+  <button class="drawer-item" id="edit-toggle">
+    <span>✏️ Edit mode</span><span class="switch" id="edit-switch"></span>
+  </button>
+  <button class="drawer-item danger" id="logout-btn"><span>🚪 Log out</span></button>
+</aside>
+
+<!-- login -->
+<div class="login" id="login">
+  <div class="login-box">
+    <h1>🧾 Order Log</h1>
+    <p>Sol y Mar Iloilo</p>
+    <div class="acct-pick" id="acct-pick">
+      <button data-acct="admin" class="active">👤 Admin</button>
+      <button data-acct="staff">🧑‍🍳 Staff</button>
+    </div>
+    <input type="password" id="login-pw" placeholder="Password" autocomplete="current-password">
+    <div class="login-err" id="login-err"></div>
+    <button class="btn btn-primary" id="login-btn">Sign in</button>
+  </div>
+</div>
+
+<div id="print-area"></div>
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
