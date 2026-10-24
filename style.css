@@ -82,6 +82,9 @@ button { font-family:inherit; }
 .qty-row button { width:64px; height:64px; border-radius:50%; border:1px solid var(--border-strong); background:var(--bg); font-size:30px; font-weight:600; cursor:pointer; }
 .qty-row button:active { background:var(--accent-light); border-color:var(--accent); }
 .qty-big { font-family:'DM Mono',monospace; font-size:52px; font-weight:600; min-width:90px; text-align:center; }
+.qty-note { width:100%; border:1px solid var(--border); border-radius:var(--r-sm); padding:12px; margin-bottom:16px; font-family:inherit; font-size:15px; background:var(--bg); resize:none; }
+.qty-note:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+.item-note { font-size:12px; font-weight:400; color:var(--muted); margin-top:2px; overflow-wrap:anywhere; }
 .quick-qty { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px; }
 .quick-qty button { padding:14px 0; border:1px solid var(--border); background:var(--bg); border-radius:var(--r-sm); font-family:'DM Mono',monospace; font-size:16px; font-weight:600; cursor:pointer; }
 .quick-qty button.sel { background:var(--accent); border-color:var(--accent); color:#fff; }
@@ -126,6 +129,7 @@ table.summary-table tr:last-child td { border-bottom:none; }
   .r-center { text-align:center; } .r-sub { font-size:11px; }
   .r-dept { font-size:16px; font-weight:900; }
   .r-rule { border-top:2px solid #000; margin:6px 0; }
+  .r-note { font-weight:700; font-size:0.9em; }
   .r-line { display:flex; justify-content:space-between; gap:6px; padding:3px 0; font-weight:900; }
   .r-item { flex:1; min-width:0; overflow-wrap:anywhere; }
   .r-line span:last-child { white-space:nowrap; flex-shrink:0; }
