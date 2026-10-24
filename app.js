@@ -96,6 +96,7 @@ function openQty(key, qty, mode) {
   $('qm-name').textContent = DEPTS[dept].icon + ' ' + name;
   $('qm-sub').textContent = mode === 'add' && draft[key] ? `Already in list: ${draft[key].qty} — this adds more` : 'How many?';
   $('qm-ok').textContent = mode === 'set' ? 'Update' : 'Add to list';
+  $('qm-note').value = (draft[key] && draft[key].note) || '';
   paintQty();
   $('qty-modal').classList.add('show');
 }
@@ -107,7 +108,9 @@ function closeQty() { $('qty-modal').classList.remove('show'); }
 function confirmQty() {
   const { key, qty, mode } = modal;
   const { dept, name } = parseKey(key);
+  const note = $('qm-note').value.trim();
   draft[key] = { name, dept, qty: mode === 'set' ? qty : ((draft[key] && draft[key].qty) || 0) + qty };
+  if (note) draft[key].note = note;
   closeQty(); renderDraft(); renderGrid();
 }
 
@@ -121,7 +124,7 @@ function clearDraft() {
 function completeOrder() {
   const staff = $('staff-input').value.trim();
   if (!staff) { showToast('⚠️ Enter your name first'); $('staff-input').focus(); return; }
-  const items = Object.values(draft).map(({ name, dept, qty }) => ({ name, dept, qty }));
+  const items = Object.values(draft).map(({ name, dept, qty, note }) => note ? { name, dept, qty, note } : { name, dept, qty });
   if (!items.length) { showToast('⚠️ Add at least one product'); return; }
   const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   $('complete-btn').disabled = true;
@@ -259,7 +262,7 @@ function renderDraft() {
   const total = rows.reduce((s, [, v]) => s + v.qty, 0);
   $('draft-sub').textContent = rows.length ? `${rows.length} product${rows.length === 1 ? '' : 's'} · ${total} total — tap a row to change qty` : 'Nothing added yet';
   el.innerHTML = rows.length
-    ? rows.map(([key, v]) => `<div class="draft-row" data-edit="${escapeHtml(key)}"><div class="draft-name">${DEPTS[v.dept].icon} ${escapeHtml(v.name)}</div><div class="draft-qty">${v.qty}</div><button class="row-remove" data-rm="${escapeHtml(key)}" title="Remove">✕</button></div>`).join('')
+    ? rows.map(([key, v]) => `<div class="draft-row" data-edit="${escapeHtml(key)}"><div class="draft-name">${DEPTS[v.dept].icon} ${escapeHtml(v.name)}${v.note ? `<div class="item-note">📝 ${escapeHtml(v.note)}</div>` : ''}</div><div class="draft-qty">${v.qty}</div><button class="row-remove" data-rm="${escapeHtml(key)}" title="Remove">✕</button></div>`).join('')
     : `<div class="draft-empty">Tap a product to start the order.</div>`;
   $('complete-btn').disabled = !rows.length;
 }
@@ -319,7 +322,7 @@ function renderSummary() {
           <span class="order-item-count">${o.items.length} item${o.items.length === 1 ? '' : 's'} · ${t} total</span>
         </div>
         <div class="order-item-body">
-          ${o.items.map(it => `<div class="line"><span>${DEPTS[it.dept].icon} ${escapeHtml(it.name)}</span><span>${it.qty}</span></div>`).join('')}
+          ${o.items.map(it => `<div class="line"><span>${DEPTS[it.dept].icon} ${escapeHtml(it.name)}${it.note ? `<div class="item-note">📝 ${escapeHtml(it.note)}</div>` : ''}</span><span>${it.qty}</span></div>`).join('')}
           <div class="order-item-actions">
             ${depts.map(k => `<button class="btn-print-small" onclick="printOrderSlip('${o.id}','${k}')">🖨️ ${DEPTS[k].icon} ${DEPTS[k].label}</button>`).join('')}
             ${editMode ? `<button class="btn-del-small" onclick="deleteOrder('${o.id}')">🗑️ Delete</button>` : ''}
@@ -380,7 +383,7 @@ function receiptHead(dept, when, extra) {
     <div class="r-rule"></div>`;
 }
 function receiptLines(rows) {
-  return rows.map(r => `<div class="r-line"><span class="r-item">${escapeHtml(r.name)}</span><span>out -${r.qty}</span></div>`).join('');
+  return rows.map(r => `<div class="r-line"><span class="r-item">${escapeHtml(r.name)}${r.note ? `<div class="r-note">* ${escapeHtml(r.note)}</div>` : ''}</span><span>out -${r.qty}</span></div>`).join('');
 }
 function printHtml(html) { $('print-area').innerHTML = html; window.print(); }
 function printOrderSlip(id, dept) {
